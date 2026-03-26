@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - Produtos</title>
+    <style>
+        /* Mesmo estilo do menu e container do cliente.html */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+        .menu { background: #333; padding: 15px; color: white; margin-bottom: 20px; border-radius: 5px; }
+        .menu a { color: white; margin: 0 15px; text-decoration: none; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <a href="index.html">Login</a>
+        <a href="cliente.html">Clientes</a>
+        <a href="estoque.html">Estoque</a>
+        <a href="financeiro.html">Vendas</a>
+        <a href="#" onclick="logout()">Sair</a>
+    </div>
 
+    <div class="container">
+        <h1>Cadastro de Produto</h1>
+        <form id="formProduto">
+            <input type="text" id="nomeProduto" placeholder="Nome do produto" required>
+            <input type="number" id="preco" placeholder="Preço (R$)" step="0.01" required>
+            <input type="number" id="quantidade" placeholder="Quantidade em estoque" required>
+            <button type="submit">Cadastrar Produto</button>
+        </form>
+
+        <h2>Produtos em Estoque</h2>
+        <table id="tabelaProdutos">
+            <thead><tr><th>Produto</th><th>Preço</th><th>Estoque</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function carregarProdutos() {
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            const tbody = document.querySelector('#tabelaProdutos tbody');
+            tbody.innerHTML = '';
+            produtos.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.nome}</td><td>R$ ${parseFloat(p.preco).toFixed(2)}</td><td>${p.quantidade}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('formProduto').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            produtos.push({
+                nome: document.getElementById('nomeProduto').value,
+                preco: document.getElementById('preco').value,
+                quantidade: document.getElementById('quantidade').value
+            });
+            localStorage.setItem('produtos', JSON.stringify(produtos));
+            alert('Produto cadastrado!');
+            this.reset();
+            carregarProdutos();
+        });
+
+        function logout() {
+            localStorage.removeItem('logado');
+            window.location.href = 'index.html';
+        }
+
+        carregarProdutos();
+    </script>
+</body>
+</html>
