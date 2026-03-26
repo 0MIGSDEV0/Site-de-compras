@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Vendas</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); margin: 0; padding: 0; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #5a6fd8; }
+        h1 { color: #333; }
+        .link { margin-top: 15px; display: block; color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Sistema de Vendas</h1>
+        <h2>Login</h2>
+        <input type="text" id="usuario" placeholder="Usuário (admin)" value="admin">
+        <input type="password" id="senha" placeholder="Senha (1234)" value="1234">
+        <button onclick="fazerLogin()">Entrar</button>
+        <a href="cliente.html" class="link">Ainda não tem conta? Cadastre-se como cliente</a>
+    </div>
 
+    <script>
+        function fazerLogin() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+
+            if (usuario === "admin" && senha === "1234") {
+                localStorage.setItem('logado', 'true');
+                window.location.href = "estoque.html";
+            } else {
+                alert("Usuário ou senha incorretos!\nDica: admin / 1234");
+            }
+        }
+
+        // Se já estiver logado, vai direto pro estoque
+        if (localStorage.getItem('logado') === 'true') {
+            window.location.href = "estoque.html";
+        }
+    </script>
+</body>
+</html>
