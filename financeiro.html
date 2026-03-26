@@ -3,51 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendas - Financeiro</title>
+    <title>Shopee - Vendas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
-        .menu { background: #333; padding: 15px; color: white; margin-bottom: 20px; border-radius: 5px; }
-        .menu a { color: white; margin: 0 15px; text-decoration: none; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        select, input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
-        button { padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        :root { --shopee-orange: #ff5722; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f5f5f5; }
+        .header {
+            background: var(--shopee-orange);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo { font-size: 28px; font-weight: bold; }
+        .menu a { color: white; margin: 0 15px; text-decoration: none; font-weight: 500; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        select, input, button {
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+        }
+        button {
+            background: var(--shopee-orange);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #fff3e0;
+            color: #ff5722;
+        }
     </style>
 </head>
 <body>
-    <div class="menu">
-        <a href="index.html">Login</a>
-        <a href="cliente.html">Clientes</a>
-        <a href="estoque.html">Estoque</a>
-        <a href="financeiro.html">Vendas</a>
-        <a href="#" onclick="logout()">Sair</a>
+
+    <div class="header">
+        <div class="logo">🛍️ Shopee</div>
+        <div class="menu">
+            <a href="cliente.html">Clientes</a>
+            <a href="estoque.html">Produtos</a>
+            <a href="financeiro.html">Vendas</a>
+            <a href="#" onclick="logout()">Sair</a>
+        </div>
     </div>
 
     <div class="container">
-        <h1>Registrar Venda</h1>
-        <form id="formVenda">
-            <select id="clienteVenda" required>
-                <option value="">Selecione o cliente</option>
-            </select>
-            <select id="produtoVenda" required>
-                <option value="">Selecione o produto</option>
-            </select>
-            <input type="number" id="qtdVenda" placeholder="Quantidade" min="1" required>
-            <button type="submit">Registrar Venda</button>
-        </form>
+        <h1>💰 Registrar Nova Venda</h1>
+        
+        <div class="form-container">
+            <form id="formVenda">
+                <select id="clienteVenda" required>
+                    <option value="">Selecione o Cliente</option>
+                </select>
+                <select id="produtoVenda" required>
+                    <option value="">Selecione o Produto</option>
+                </select>
+                <input type="number" id="qtdVenda" placeholder="Quantidade" min="1" required>
+                <button type="submit">Registrar Venda</button>
+            </form>
+        </div>
 
-        <h2>Vendas Realizadas</h2>
+        <h1>📋 Histórico de Vendas</h1>
         <table id="tabelaVendas">
-            <thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtde</th><th>Total</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
             <tbody></tbody>
         </table>
     </div>
 
     <script>
+        // (mesmo script da versão anterior, só com visual novo)
         function carregarClientesSelect() {
             const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
             const select = document.getElementById('clienteVenda');
+            select.innerHTML = '<option value="">Selecione o Cliente</option>';
             clientes.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c.nome;
@@ -59,6 +121,7 @@
         function carregarProdutosSelect() {
             const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
             const select = document.getElementById('produtoVenda');
+            select.innerHTML = '<option value="">Selecione o Produto</option>';
             produtos.forEach((p, index) => {
                 const opt = document.createElement('option');
                 opt.value = index;
@@ -73,7 +136,13 @@
             tbody.innerHTML = '';
             vendas.forEach(v => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${v.data}</td><td>${v.cliente}</td><td>${v.produto}</td><td>${v.quantidade}</td><td>R$ ${v.total.toFixed(2)}</td>`;
+                tr.innerHTML = `
+                    <td>${v.data}</td>
+                    <td>${v.cliente}</td>
+                    <td>${v.produto}</td>
+                    <td>${v.quantidade}</td>
+                    <td><strong>R$ ${v.total.toFixed(2)}</strong></td>
+                `;
                 tbody.appendChild(tr);
             });
         }
@@ -101,15 +170,14 @@
                 total: total
             });
 
-            // Atualiza estoque
-            produto.quantidade = parseInt(produto.quantidade) - qtd;
+            produto.quantidade -= qtd;
             localStorage.setItem('produtos', JSON.stringify(produtos));
             localStorage.setItem('vendas', JSON.stringify(vendas));
 
-            alert('Venda registrada com sucesso!');
+            alert('✅ Venda registrada com sucesso!');
             this.reset();
             carregarVendas();
-            carregarProdutosSelect(); // atualiza select
+            carregarProdutosSelect();
         });
 
         function logout() {
@@ -117,7 +185,6 @@
             window.location.href = 'index.html';
         }
 
-        // Inicialização
         carregarClientesSelect();
         carregarProdutosSelect();
         carregarVendas();
