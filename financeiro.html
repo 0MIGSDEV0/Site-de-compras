@@ -1,1 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas - Financeiro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+        .menu { background: #333; padding: 15px; color: white; margin-bottom: 20px; border-radius: 5px; }
+        .menu a { color: white; margin: 0 15px; text-decoration: none; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        select, input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <a href="index.html">Login</a>
+        <a href="cliente.html">Clientes</a>
+        <a href="estoque.html">Estoque</a>
+        <a href="financeiro.html">Vendas</a>
+        <a href="#" onclick="logout()">Sair</a>
+    </div>
 
+    <div class="container">
+        <h1>Registrar Venda</h1>
+        <form id="formVenda">
+            <select id="clienteVenda" required>
+                <option value="">Selecione o cliente</option>
+            </select>
+            <select id="produtoVenda" required>
+                <option value="">Selecione o produto</option>
+            </select>
+            <input type="number" id="qtdVenda" placeholder="Quantidade" min="1" required>
+            <button type="submit">Registrar Venda</button>
+        </form>
+
+        <h2>Vendas Realizadas</h2>
+        <table id="tabelaVendas">
+            <thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtde</th><th>Total</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function carregarClientesSelect() {
+            const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            const select = document.getElementById('clienteVenda');
+            clientes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.nome;
+                opt.textContent = c.nome;
+                select.appendChild(opt);
+            });
+        }
+
+        function carregarProdutosSelect() {
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            const select = document.getElementById('produtoVenda');
+            produtos.forEach((p, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = `${p.nome} - R$ ${parseFloat(p.preco).toFixed(2)}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function carregarVendas() {
+            const vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+            const tbody = document.querySelector('#tabelaVendas tbody');
+            tbody.innerHTML = '';
+            vendas.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${v.data}</td><td>${v.cliente}</td><td>${v.produto}</td><td>${v.quantidade}</td><td>R$ ${v.total.toFixed(2)}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('formVenda').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            const idx = document.getElementById('produtoVenda').value;
+            const produto = produtos[idx];
+            const qtd = parseInt(document.getElementById('qtdVenda').value);
+
+            if (qtd > parseInt(produto.quantidade)) {
+                alert("Quantidade insuficiente em estoque!");
+                return;
+            }
+
+            const total = qtd * parseFloat(produto.preco);
+
+            const vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+            vendas.push({
+                data: new Date().toLocaleDateString('pt-BR'),
+                cliente: document.getElementById('clienteVenda').value,
+                produto: produto.nome,
+                quantidade: qtd,
+                total: total
+            });
+
+            // Atualiza estoque
+            produto.quantidade = parseInt(produto.quantidade) - qtd;
+            localStorage.setItem('produtos', JSON.stringify(produtos));
+            localStorage.setItem('vendas', JSON.stringify(vendas));
+
+            alert('Venda registrada com sucesso!');
+            this.reset();
+            carregarVendas();
+            carregarProdutosSelect(); // atualiza select
+        });
+
+        function logout() {
+            localStorage.removeItem('logado');
+            window.location.href = 'index.html';
+        }
+
+        // Inicialização
+        carregarClientesSelect();
+        carregarProdutosSelect();
+        carregarVendas();
+    </script>
+</body>
+</html>
